@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="testaction"
+         name="TestAction"
+         point="pa.iscde.outline.actions">
+      <action
+            class="pa.iscde.outline.testaction.OutlineExtraAction"
+            name="!!! - Button">
+      </action>
+   </extension>
+
+</plugin>

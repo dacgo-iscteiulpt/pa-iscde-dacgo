@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OutlineTestPlugin
+Bundle-SymbolicName: pa.iscde.outline.testaction;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: pa.iscde.outline.testaction.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ pa.iscde.outline
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: OutlineTestPlugin
+Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.swt,
+ org.eclipse.swt.widgets

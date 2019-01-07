@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CodeGenExtension
+Bundle-SymbolicName: pa.iscde.outline.codegenext;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: pa.iscde.outline.codegenext.OutlineCodeGenActivator
+Require-Bundle: org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: pa.iscde.outline.codegenext
+Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.swt.widgets,
+ outline.extensibility,
+ pt.iscte.pidesco.codegenerator.internal,
+ pt.iscte.pidesco.javaeditor.service

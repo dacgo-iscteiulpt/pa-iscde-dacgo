@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="pa.iscde.outline.actions">
+      <action
+            class="pa.iscde.outline.codegenext.OutlineCodeGen"
+            name="Generate Setters and Getters">
+      </action>
+   </extension>
+
+</plugin>
