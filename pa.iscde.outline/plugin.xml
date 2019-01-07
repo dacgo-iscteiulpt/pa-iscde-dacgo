@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="actions" name="Actions" schema="schema/actions.exsd"/>
+   <extension-point id="imagemap" name="Custom Image Map" schema="schema/imagemap.exsd"/>
+   <extension
+         id="outlinePlugIn"
+         name="OutlinePlugIn"
+         point="pt.iscte.pidesco.view">
+      <view
+            class="outline.internal.OutlineView"
+            icon="outline.png">
+      </view>
+   </extension>
+
+</plugin>
