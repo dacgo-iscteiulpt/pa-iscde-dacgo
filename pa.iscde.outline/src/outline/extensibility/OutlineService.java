@@ -113,7 +113,13 @@ public class OutlineService implements IOutlineService {
 	 */
 	@Override
 	public void setOutlineVisitor(IOutlineAST outlineVisitor) {
-		this.outlineVisitor = outlineVisitor;
+		try {
+			this.outlineVisitor = outlineVisitor;
+		}
+		catch(NullPointerException e) {
+			e.printStackTrace();
+			this.outlineVisitor = new OutlineAST();
+		}
 	}
 
 	/*
