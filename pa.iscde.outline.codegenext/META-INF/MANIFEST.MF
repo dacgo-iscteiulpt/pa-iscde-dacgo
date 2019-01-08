@@ -10,5 +10,6 @@ Automatic-Module-Name: pa.iscde.outline.codegenext
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.swt.widgets,
  outline.extensibility,
+ outline.extensibility.models,
  pt.iscte.pidesco.codegenerator.internal,
  pt.iscte.pidesco.javaeditor.service

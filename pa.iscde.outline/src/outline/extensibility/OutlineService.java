@@ -16,13 +16,13 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import outline.model.OutlineAttribute;
-import outline.model.OutlineElement;
-import outline.model.OutlineMethod;
+import outline.extensibility.models.OutlineAttribute;
+import outline.extensibility.models.OutlineElement;
+import outline.extensibility.models.OutlineMethod;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
 import pt.iscte.pidesco.projectbrowser.model.SourceElement;
 
-public class OutlineService {
+public class OutlineService implements IOutlineService {
 	private static final String ENUM_IMAGE = "enum.png";
 	private static final String INTERFACE_IMAGE = "interface.png";
 	private static final String CLASS_IMAGE = "class.png";
@@ -40,7 +40,7 @@ public class OutlineService {
 	private static final String ATTRIBUTE_PROTECTED_IMAGE = "attribute_protected.png";
 	private static final String ATTRIBUTE_PUBLIC_IMAGE = "attribute_public.png";
 	private static final String PACKAGE_IMAGE = "package.png";
-	
+
 	private IOutlineAST outlineVisitor;
 	private String currentFilePath;
 	private Map<String, Image> imageMap;
@@ -51,81 +51,99 @@ public class OutlineService {
 
 	/**
 	 * Custom constructor for plug-in development
+	 * 
 	 * @param customVisitor, the custom visitor.
 	 */
 	public OutlineService(IOutlineAST customVisitor) {
 		this.outlineVisitor = customVisitor;
 	}
 
-	/** Parses SourceElement if it is a file, if it's a package does nothing.
+	/**
+	 * Parses SourceElement if it is a file, if it's a package does nothing.
+	 * 
 	 * @param editorServices, JavaEditorServices that is used to parse the file
 	 * @param element, SourceElement to be parsed and visited by the OutlineAST
-	**/
+	 */
+	@Override
 	public void parseSelectedSourceElement(JavaEditorServices editorService, SourceElement element) {
 		if (!element.isPackage()) {
 			parseSelectedFile(editorService, element.getFile());
 		}
 	}
-	
-	/** Parses and visits file with OutlineAST.
+
+	/**
+	 * Parses and visits file with OutlineAST.
+	 * 
 	 * @param editorServices, JavaEditorServices that is used to parse the file
 	 * @param file, File to be parsed and visited by the OutlineAST
-	**/
+	 */
+	@Override
 	public void parseSelectedFile(JavaEditorServices editorService, File file) {
 		this.outlineVisitor.resetOutlineElementList();
-		editorService.parseFile(file, (ASTVisitor)outlineVisitor);
+		editorService.parseFile(file, (ASTVisitor) outlineVisitor);
 		this.currentFilePath = file.getPath();
 	}
 
-	/**
-	 * @return IOutlineAST, the AST being used.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see outline.extensibility.IOutlineService#getOutlineVisitor()
 	 */
+	@Override
 	public IOutlineAST getOutlineVisitor() {
 		return outlineVisitor;
 	}
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return List<OutlineElement>, returns the current list the AST has stored of OutlineElements.
+	 * @see outline.extensibility.IOutlineService#getOutlineElementList()
 	 */
+	@Override
 	public List<OutlineElement> getOutlineElementList() {
 		return outlineVisitor.getOutlineElementList();
-
 	}
-	/**
-	 * Sets AST to be used by this OutlineService when parsing/visiting.
-	 * @param outlineVisitor, a visitor that implements the IOutlineAST interface.
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * outline.extensibility.IOutlineService#setOutlineVisitor(outline.extensibility
+	 * .IOutlineAST)
 	 */
+	@Override
 	public void setOutlineVisitor(IOutlineAST outlineVisitor) {
 		this.outlineVisitor = outlineVisitor;
 	}
 
-	/**
-	 * @return String,the currently selected package's name. Example: "outline.extensibility".
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see outline.extensibility.IOutlineService#getCurrentSelectedPackage()
 	 */
+	@Override
 	public String getCurrentSelectedPackage() {
 		return outlineVisitor.getCurrentPackage();
 	}
 
-	/**
-	 * Returns the current filepath previously acquired using the method "java.io.File.getPath()".
-	 * @return String,the currently open file path.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see outline.extensibility.IOutlineService#getCurrentFile()
 	 */
+	@Override
 	public String getCurrentFile() {
 		return currentFilePath;
 	}
 
 	/**
-	 * Returns a list of the current OutlineElements stored by the visitor.
-	 * @return List<OutlineElement>, the list of OutlineElements.
-	 */
-	public List<OutlineElement> getOutlineElements() {
-		return outlineVisitor.getOutlineElementList();
-	}
-
-	/** For each OutlineElement in a list creates a corresponding TreeItem.
-	 * @param outlineElements, list of OutlineElements that will be represented in the Tree.
+	 * For each OutlineElement in a list creates a corresponding TreeItem.
+	 * 
+	 * @param outlineElements, list of OutlineElements that will be represented in
+	 *        the Tree.
 	 * @param tree, base tree where TreeItems will be added.
 	 */
+	@Override
 	public void addTreeItems(List<OutlineElement> outlineElements, Tree tree) {
 		tree.removeAll();
 		TreeItem packageItem = new TreeItem(tree, 0);
@@ -140,7 +158,8 @@ public class OutlineService {
 	}
 
 	/**
-	 * Given a root TreeItem, populate it with model data. 
+	 * Given a root TreeItem, populate it with model data.
+	 * 
 	 * @param treeRoot, a TreeItem that corresponds to an OutlineElement.
 	 * @param element, model used to populate the TreeItems with data.
 	 */
@@ -153,27 +172,40 @@ public class OutlineService {
 		for (OutlineMethod method : element.getMethodList()) {
 			TreeItem methodItem = new TreeItem(treeRoot, 0);
 			this.setChildrenIcons(methodItem, method);
-			methodItem.setText(2, method.getName() + "() : " + method.getReturnType());
+			List<String> methodParameters = method.getParameterTypes();
+			String methodText = (method.getName() + "(");
+			for (String parameter : methodParameters) {
+				methodText = methodText.concat(parameter + ", ");
+			}
+			if (methodParameters.size() > 0) {
+				methodText = methodText.substring(0, methodText.length() - 2);
+			}
+			methodText = methodText.concat(") : " + method.getReturnType());
+			methodItem.setText(2, methodText);
 		}
 
 	}
 
 	/**
 	 * Sets icons for an outline element's attributes.
-	 * @param childItem, the TreeItem corresponding to the OutlineElement's attribute.
+	 * 
+	 * @param childItem, the TreeItem corresponding to the OutlineElement's
+	 *        attribute.
 	 * @param attribute, model used to populate TreeItem with data.
 	 */
 	private void setChildrenIcons(TreeItem childItem, OutlineAttribute attribute) {
 		this.setChildrenAccessModifierIcon(childItem, attribute);
 		this.setChildrenExtraModifierIcon(childItem, attribute);
 	}
-	
+
 	/**
-	 * Sets the access modifier icon. (Public/Protected/Private) 
-	 * @param childItem, the TreeItem corresponding to the OutlineElement's attribute.
+	 * Sets the access modifier icon. (Public/Protected/Private)
+	 * 
+	 * @param childItem, the TreeItem corresponding to the OutlineElement's
+	 *        attribute.
 	 * @param attribute, model used to populate TreeItem with data.
 	 */
-	private void setChildrenAccessModifierIcon(TreeItem childItem, OutlineAttribute attribute){
+	private void setChildrenAccessModifierIcon(TreeItem childItem, OutlineAttribute attribute) {
 		Image accessModifierIcon;
 		if (Modifier.isPublic(attribute.getModifiers())) {
 			accessModifierIcon = this.imageMap.get(ATTRIBUTE_PUBLIC_IMAGE);
@@ -186,10 +218,12 @@ public class OutlineService {
 		}
 		childItem.setImage(0, accessModifierIcon);
 	}
-	
+
 	/**
 	 * Sets the extra modifier icon. (Static/Final/etc..)
-	 * @param childItem, the TreeItem corresponding to the OutlineElement's attribute.
+	 * 
+	 * @param childItem, the TreeItem corresponding to the OutlineElement's
+	 *        attribute.
 	 * @param attribute, model used to populate TreeItem with data.
 	 */
 	private void setChildrenExtraModifierIcon(TreeItem childItem, OutlineAttribute attribute) {
@@ -212,6 +246,7 @@ public class OutlineService {
 
 	/**
 	 * Sets icons for methods.
+	 * 
 	 * @param childItem, the TreeItem corresponding to the OutlineElement's method.
 	 * @param method, model used to populate TreeItem with data.
 	 */
@@ -219,9 +254,10 @@ public class OutlineService {
 		this.setChildrenAccessModifierIcon(childItem, method);
 		this.setChildrenExtraModifierIcon(childItem, method);
 	}
-	
+
 	/**
 	 * Sets the access modifier icon. (Public/Protected/Private)
+	 * 
 	 * @param childItem, the TreeItem corresponding to the OutlineElement's method.
 	 * @param method, model used to populate TreeItem with data.
 	 */
@@ -238,9 +274,10 @@ public class OutlineService {
 		}
 		childItem.setImage(0, accessModifierIcon);
 	}
-	
+
 	/**
-	 * Sets the extra modifier icon. (Static/Final/etc..) 
+	 * Sets the extra modifier icon. (Static/Final/etc..)
+	 * 
 	 * @param childItem, the TreeItem corresponding to the OutlineElement's method.
 	 * @param method, model used to populate TreeItem with data.
 	 */
@@ -266,6 +303,7 @@ public class OutlineService {
 
 	/**
 	 * Sets root TreeItem icons.
+	 * 
 	 * @param treeRoot, the TreeItem corresponding to the OutlineElement.
 	 * @param element, model used to populate TreeItem with data.
 	 */
@@ -273,9 +311,10 @@ public class OutlineService {
 		setTypeIcon(treeRoot, element);
 		setModifierIcon(treeRoot, element);
 	}
-	
+
 	/**
 	 * Sets Element modifier icon. (Final/Abstract).
+	 * 
 	 * @param item, the TreeItem corresponding to the OutlineElement.
 	 * @param element, model used to populate TreeItem with data.
 	 */
@@ -295,6 +334,7 @@ public class OutlineService {
 
 	/**
 	 * Sets Element type icon. (Class/Interface/Enum)
+	 * 
 	 * @param item, the TreeItem corresponding to the OutlineElement.
 	 * @param element, model used to populate TreeItem with data.
 	 */
@@ -323,8 +363,10 @@ public class OutlineService {
 
 	/**
 	 * Sets the imageMap to be used by the application.
+	 * 
 	 * @param imageMap, the image map to be used.
 	 */
+	@Override
 	public void setImageMap(Map<String, Image> imageMap) {
 		this.imageMap = imageMap;
 	}

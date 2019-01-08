@@ -16,10 +16,10 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
-import outline.model.OutlineAttribute;
-import outline.model.OutlineElement;
-import outline.model.OutlineElementType;
-import outline.model.OutlineMethod;
+import outline.extensibility.models.OutlineAttribute;
+import outline.extensibility.models.OutlineElement;
+import outline.extensibility.models.OutlineElementType;
+import outline.extensibility.models.OutlineMethod;
 
 public class OutlineAST extends ASTVisitor implements IOutlineAST {
 	private String currentPackage;

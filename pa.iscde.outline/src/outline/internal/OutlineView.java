@@ -31,8 +31,10 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import outline.extensibility.CustomImageMap;
+import outline.extensibility.IOutlineService;
 import outline.extensibility.OutlineAction;
 import outline.extensibility.OutlineService;
+import outline.extensibility.models.OutlineAttribute;
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
 import pt.iscte.pidesco.projectbrowser.service.ProjectBrowserServices;
@@ -46,7 +48,7 @@ public class OutlineView implements PidescoView {
 	private static final int INFO_ICON_WIDTH = 70;
 	private static final int EXTRA_INFO_ICON_WIDTH = 20;
 	private static final int INFO_TEXT_WIDTH = 450;
-	private OutlineService outlineService;
+	private IOutlineService outlineService;
 	private Tree outlineTree;
 	private Composite baseArea;
 	private Group buttonRow;
@@ -140,7 +142,7 @@ public class OutlineView implements PidescoView {
 		umlService.addListener(outlineListener);
 	}
 
-	private void addExtensionsToView(Composite buttonArea, Composite parent, OutlineService outlineService,
+	private void addExtensionsToView(Composite buttonArea, Composite parent, IOutlineService outlineService,
 			Tree outlineTree) {
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = reg.getConfigurationElementsFor(OUTLINE_ACTIONS_EXTENSION_PATH);
@@ -155,7 +157,8 @@ public class OutlineView implements PidescoView {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						action.run(parent, outlineService.getCurrentFile(), getCurrentlySelectedAttributes(),
-								getCurrentlySelectedMethods(), getCurrentlySelectedElements());
+								getCurrentlySelectedMethods(), getCurrentlySelectedElements(),
+								outlineService.getOutlineElementList());
 						parent.layout();
 					}
 

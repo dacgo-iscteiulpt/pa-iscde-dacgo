@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
-import outline.extensibility.OutlineService;
+import outline.extensibility.IOutlineService;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorListener;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
 import pt.iscte.pidesco.projectbrowser.model.SourceElement;
@@ -17,13 +17,13 @@ import pt.iscte.pidesco.uml.service.UmlInterfaceListener;
 
 public class OutlineListener implements ProjectBrowserListener, JavaEditorListener,UmlInterfaceListener{
 
-	private OutlineService outlineService;
+	private IOutlineService outlineService;
 	private Composite viewArea;
 	private Tree tree;
 	private JavaEditorServices editorServices;
 	private String activeFile;
 
-	public OutlineListener(OutlineService outlineService, Composite viewArea, Tree tree) {
+	public OutlineListener(IOutlineService outlineService, Composite viewArea, Tree tree) {
 		BundleContext context = OutlineActivator.getContext();
 		ServiceReference<JavaEditorServices> javaE = context.getServiceReference(JavaEditorServices.class);
 

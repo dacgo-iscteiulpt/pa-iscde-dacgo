@@ -2,7 +2,7 @@ package outline.extensibility;
 
 import java.util.List;
 
-import outline.model.OutlineElement;
+import outline.extensibility.models.OutlineElement;
 
 public interface IOutlineAST {
 
